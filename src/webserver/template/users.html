@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <title>Document</title>
+</head>
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px white solid;
+    }
+    
+    th,
+    tr {
+        text-align: left;
+    }
+</style>
+
+<body>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>MSISDN</th>
+                <th>Email</th>
+                <th>Created_Time</th>
+            </tr>
+        </thead>
+        <tbody id="usr">
+
+        </tbody>
+    </table>
+    <br> Filter By name
+    <input id="ipt" type="text" name="filter">
+    <br>
+    <br> Visitors count: {{.Visitor}}
+</body>
+<script>
+    const req = (params) => {
+        params != undefined ? params : ""
+        path = "http://localhost:9000/users?name=" + params
+
+        $.ajax({
+            type: 'GET',
+            url: path,
+            async: false,
+            dataType: "json",
+            beforeSend: (xhr) => {
+                if (xhr && xhr.overrideMimeType) {
+                    xhr.overrideMimeType('application/json;charset=utf-8');
+                }
+            },
+            success: (data) => {
+                strings = `<tr>`
+                data.data.forEach(val => {
+                    strings += `<td>` + val.id + `</td>`
+                    strings += `<td>` + val.name + `</td>`
+                    strings += `<td>` + val.msisdn + `</td>`
+                    strings += `<td>` + val.email + `</td>`
+                    strings += `<td>` + val.create_time + `</td>`
+                    strings += `</tr>`
+                });
+
+                $("#usr").html(strings)
+            }
+        });
+    }
+    $(document).ready(() => {
+        // init data
+        req("")
+
+        // filter data
+        $("#ipt").change(() => {
+            req($("#ipt").val())
+        })
+    });
+</script>
+
+</html>
